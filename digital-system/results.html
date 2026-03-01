@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>عرض النتائج وحساب المتوسط</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
+body{
+    background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+    min-height:100vh;
+    color:white;
+    overflow-x:hidden;
+}
+nav{
+    display:flex;
+    justify-content:center;
+    gap:40px;
+    padding:20px;
+    background:rgba(0,0,0,0.6);
+    backdrop-filter:blur(8px);
+    position:fixed;
+    top:0;
+    width:100%;
+    z-index:10;
+}
+nav a{
+    color:white;
+    text-decoration:none;
+    font-weight:600;
+    font-size:16px;
+    position:relative;
+}
+nav a::after{
+    content:"";
+    position:absolute;
+    left:0;
+    bottom:-5px;
+    width:0%;
+    height:2px;
+    background:#00f2fe;
+    transition:0.3s;
+}
+nav a:hover::after{width:100%;}
+
+.container{
+    max-width:700px;
+    margin:120px auto 60px auto;
+    background:rgba(0,0,0,0.7);
+    padding:40px;
+    border-radius:20px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.7);
+}
+.container h1{
+    text-align:center;
+    margin-bottom:30px;
+    font-size:32px;
+    color:#00f2fe;
+    text-shadow:2px 2px 8px rgba(0,0,0,0.7);
+}
+form{display:flex;flex-direction:column;gap:20px;}
+form label{font-weight:500;font-size:16px;}
+form input, form select{
+    padding:12px 15px;
+    border-radius:10px;
+    border:none;
+    font-size:16px;
+    outline:none;
+    width:100%;
+}
+form input:focus, form select:focus{
+    box-shadow:0 0 10px #00f2fe;
+}
+form button{
+    padding:15px;
+    border:none;
+    border-radius:25px;
+    background:linear-gradient(90deg,#00f2fe,#4facfe);
+    color:white;
+    font-weight:600;
+    cursor:pointer;
+    font-size:16px;
+    transition:0.3s;
+}
+form button:hover{
+    transform:scale(1.05);
+    box-shadow:0 10px 25px rgba(0,0,0,0.7);
+}
+
+.result-box{
+    display:none;
+    margin-top:30px;
+    background:rgba(0,0,0,0.6);
+    padding:20px;
+    border-radius:15px;
+}
+.result-box table{
+    width:100%;
+    border-collapse:collapse;
+    margin-bottom:20px;
+}
+.result-box table, .result-box th, .result-box td{
+    border:1px solid #00f2fe;
+}
+.result-box th, .result-box td{
+    padding:10px;
+    text-align:center;
+}
+.result-box th{
+    background:rgba(0,242,254,0.2);
+}
+.result-box .average{
+    font-size:18px;
+    font-weight:600;
+    text-align:center;
+    margin-bottom:10px;
+}
+.result-box .status{
+    font-size:20px;
+    font-weight:700;
+    text-align:center;
+}
+.footer{
+    text-align:center;
+    padding:20px;
+    background:rgba(0,0,0,0.6);
+    margin-top:60px;
+    color:#ccc;
+}
+</style>
+</head>
+<body>
+
+<nav>
+    <a href="index.html">Home</a>
+    <a href="services.html">Services</a>
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact</a>
+</nav>
+
+<div class="container">
+    <h1>عرض النتائج وحساب المتوسط</h1>
+    <form id="resultsForm">
+        <label for="level">المرحلة الدراسية</label>
+        <select id="level" required>
+            <option value="">اختر المرحلة الدراسية</option>
+            <option value="primary">الابتدائي</option>
+            <option value="middle">الاعدادي</option>
+            <option value="secondary">الثانوي</option>
+            <option value="university">الجامعي</option>
+        </select>
+
+        <div id="subLevelDiv" style="display:none;">
+            <label for="subLevel">الصف / التخصص</label>
+            <select id="subLevel"></select>
+        </div>
+
+        <label for="studentName">اسم الطالب</label>
+        <input type="text" id="studentName" placeholder="أدخل اسم الطالب" required>
+
+        <button type="submit">عرض النتائج</button>
+    </form>
+
+    <div class="result-box" id="resultBox">
+        <table id="resultTable">
+            <thead>
+                <tr id="tableHeader"></tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+        </table>
+        <div class="average" id="averageDiv"></div>
+        <div class="status" id="statusDiv"></div>
+    </div>
+</div>
+
+<footer class="footer">
+© 2026 Digital School Project
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script>
+// أنيميشن دخول الصفحة
+window.addEventListener("DOMContentLoaded",()=>{
+    gsap.from(".container",{y:50,opacity:0,duration:1});
+    gsap.from("nav",{y:-50,opacity:0,duration:1});
+});
+
+// إعداد الصفوف حسب المرحلة
+const level = document.getElementById("level");
+const subLevelDiv = document.getElementById("subLevelDiv");
+const subLevel = document.getElementById("subLevel");
+
+level.addEventListener("change",()=>{
+    subLevel.innerHTML="";
+    let options = [];
+    if(level.value==="primary"){
+        for(let i=1;i<=6;i++){options.push(`<option value="${i}">${i} ابتدائي</option>`);}
+        subLevelDiv.style.display="block";
+    } else if(level.value==="middle"){
+        for(let i=1;i<=3;i++){options.push(`<option value="${i}">${i} اعدادي</option>`);}
+        subLevelDiv.style.display="block";
+    } else if(level.value==="secondary"){
+        options.push('<option value="1_general">الصف الأول عام</option>');
+        options.push('<option value="1_baccalaureate">الصف الأول بكالوريا</option>');
+        options.push('<option value="2_science">الثاني علمي علوم</option>');
+        options.push('<option value="2_math">الثاني علمي رياضة</option>');
+        options.push('<option value="2_literary">الثاني ادبي</option>');
+        options.push('<option value="3_science">الثالث علمي علوم</option>');
+        options.push('<option value="3_math">الثالث علمي رياضة</option>');
+        options.push('<option value="3_literary">الثالث ادبي</option>');
+        subLevelDiv.style.display="block";
+    } else if(level.value==="university"){
+        options.push('<option value="university">الجامعي</option>');
+        subLevelDiv.style.display="none";
+    } else{
+        subLevelDiv.style.display="none";
+    }
+    subLevel.innerHTML = options.join('');
+});
+
+// مواد كل مرحلة
+function getSubjects(level, subLevel){
+    if(level==="primary"){
+        let grade=parseInt(subLevel);
+        if(grade<=3){
+            return ["عربي","رياضيات","تربية دينية","تكنولوجيا","لغة انجليزية"];
+        } else {
+            return ["عربي","رياضيات","لغة انجليزية","علوم","دراسات","تكنولوجيا","تربية دينية"];
+        }
+    } else if(level==="middle"){
+        return ["عربي","رياضيات","لغة انجليزية","علوم","دراسات","تكنولوجيا","تربية دينية"];
+    } else if(level==="secondary"){
+        if(subLevel.includes("1_")){
+            return ["عربي","رياضيات","لغة انجليزية","علوم متكاملة","تاريخ","لغة فرنسية","برمجة","ذكاء اصطناعي","تربية دينية","فلسفة"];
+        } else if(subLevel.includes("2_science") || subLevel.includes("3_science")){
+            return ["عربي","رياضيات","فيزياء","كيمياء","أحياء","لغة انجليزية","علوم حاسوب"];
+        } else if(subLevel.includes("2_math") || subLevel.includes("3_math")){
+            return ["عربي","رياضيات","لغة انجليزية","رياضة","برمجة"];
+        } else if(subLevel.includes("2_literary") || subLevel.includes("3_literary")){
+            return ["عربي","رياضيات","لغة انجليزية","تاريخ","جغرافيا","فلسفة"];
+        }
+    } else if(level==="university"){
+        return ["تقدير"];
+    }
+    return [];
+}
+
+// عرض النتائج وحساب المتوسط
+document.getElementById("resultsForm").addEventListener("submit",function(e){
+    e.preventDefault();
+    const stuLevel=level.value;
+    const stuSub=subLevel.value;
+    const name=document.getElementById("studentName").value.trim();
+    if(!stuLevel || !name){alert("اختر المرحلة واكتب الاسم");return;}
+    const subjects=getSubjects(stuLevel,stuSub);
+    const tableHeader=document.getElementById("tableHeader");
+    const tableBody=document.getElementById("tableBody");
+    tableHeader.innerHTML = "<th>المادة</th><th>الدرجة</th>";
+    tableBody.innerHTML = "";
+    let total=0;
+    let maxTotal=0;
+    subjects.forEach(sub=>{
+        let mark=prompt(`أدخل درجة مادة ${sub} (0-100)`);
+        mark=parseFloat(mark)||0;
+        total+=mark;
+        maxTotal+=100;
+        let row=document.createElement("tr");
+        row.innerHTML=`<td>${sub}</td><td>${mark}</td>`;
+        tableBody.appendChild(row);
+    });
+    document.getElementById("resultBox").style.display="block";
+    const average=(total/subjects.length).toFixed(2);
+    document.getElementById("averageDiv").textContent=`المتوسط: ${average}`;
+    document.getElementById("statusDiv").textContent=average>=50?"✅ ناجح":"❌ راسب";
+});
+</script>
+
+</body>
+</html>

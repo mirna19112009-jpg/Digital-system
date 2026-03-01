@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Registration</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
+body{
+    background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+    min-height:100vh;
+    color:white;
+    overflow-x:hidden;
+}
+nav{
+    display:flex;
+    justify-content:center;
+    gap:40px;
+    padding:20px;
+    background:rgba(0,0,0,0.6);
+    backdrop-filter:blur(8px);
+    position:fixed;
+    top:0;
+    width:100%;
+    z-index:10;
+}
+nav a{
+    color:white;
+    text-decoration:none;
+    font-weight:600;
+    font-size:16px;
+    position:relative;
+}
+nav a::after{
+    content:"";
+    position:absolute;
+    left:0;
+    bottom:-5px;
+    width:0%;
+    height:2px;
+    background:#00f2fe;
+    transition:0.3s;
+}
+nav a:hover::after{width:100%;}
+
+.container{
+    max-width:600px;
+    margin:120px auto 60px auto;
+    background:rgba(0,0,0,0.7);
+    padding:40px;
+    border-radius:20px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.7);
+}
+.container h1{
+    text-align:center;
+    margin-bottom:30px;
+    font-size:32px;
+    color:#00f2fe;
+    text-shadow:2px 2px 8px rgba(0,0,0,0.7);
+}
+form{display:flex;flex-direction:column;gap:20px;}
+form label{font-weight:500;font-size:16px;}
+form input, form select{
+    padding:12px 15px;
+    border-radius:10px;
+    border:none;
+    font-size:16px;
+    outline:none;
+    width:100%;
+}
+form input:focus, form select:focus{
+    box-shadow:0 0 10px #00f2fe;
+}
+form button{
+    padding:15px;
+    border:none;
+    border-radius:25px;
+    background:linear-gradient(90deg,#00f2fe,#4facfe);
+    color:white;
+    font-weight:600;
+    cursor:pointer;
+    font-size:16px;
+    transition:0.3s;
+}
+form button:hover{
+    transform:scale(1.05);
+    box-shadow:0 10px 25px rgba(0,0,0,0.7);
+}
+
+.footer{
+    text-align:center;
+    padding:20px;
+    background:rgba(0,0,0,0.6);
+    margin-top:60px;
+    color:#ccc;
+}
+</style>
+</head>
+<body>
+
+<nav>
+    <a href="index.html">Home</a>
+    <a href="services.html">Services</a>
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact</a>
+</nav>
+
+<div class="container">
+    <h1>تسجيل الطلاب إلكترونيًا</h1>
+    <form id="studentForm">
+        <label for="name">الاسم الكامل</label>
+        <input type="text" id="name" name="name" placeholder="أدخل الاسم الكامل" required>
+
+        <label for="studentId">الرقم التعريفي / الرقم الجامعي</label>
+        <input type="text" id="studentId" name="studentId" placeholder="أدخل الرقم التعريفي" required>
+
+        <label for="email">البريد الإلكتروني</label>
+        <input type="email" id="email" name="email" placeholder="example@email.com" required>
+
+        <label for="level">المرحلة الدراسية</label>
+        <select id="level" name="level" required>
+            <option value="">اختر المرحلة</option>
+            <option value="primary">ابتدائي</option>
+            <option value="middle">اعدادي</option>
+            <option value="secondary">ثانوي</option>
+            <option value="university">جامعي</option>
+        </select>
+
+        <div id="universityFields" style="display:none;flex-direction:column;gap:20px;">
+            <label for="department">التخصص</label>
+            <select id="department" name="department">
+                <option value="">اختر التخصص</option>
+                <option value="CS">علوم الحاسب</option>
+                <option value="IT">تكنولوجيا المعلومات</option>
+                <option value="EE">الهندسة الكهربائية</option>
+                <option value="ME">الهندسة الميكانيكية</option>
+            </select>
+
+            <label for="year">السنة الجامعية</label>
+            <select id="year" name="year">
+                <option value="">اختر السنة</option>
+                <option value="1">الأولى</option>
+                <option value="2">الثانية</option>
+                <option value="3">الثالثة</option>
+                <option value="4">الرابعة</option>
+            </select>
+        </div>
+
+        <button type="submit">تسجيل الطالب</button>
+    </form>
+</div>
+
+<footer class="footer">
+© 2026 Digital School Project
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script>
+// أنيميشن دخول الصفحة
+window.addEventListener("DOMContentLoaded",()=>{
+    gsap.from(".container",{y:50,opacity:0,duration:1});
+    gsap.from("nav",{y:-50,opacity:0,duration:1});
+});
+
+// إظهار حقول الجامعي فقط عند الاختيار
+document.getElementById("level").addEventListener("change",function(){
+    if(this.value === "university"){
+        document.getElementById("universityFields").style.display="flex";
+    } else {
+        document.getElementById("universityFields").style.display="none";
+    }
+});
+
+// فورم تجريبي
+document.getElementById("studentForm").addEventListener("submit",function(e){
+    e.preventDefault();
+    alert("تم تسجيل الطالب بنجاح! ✅");
+    this.reset();
+    document.getElementById("universityFields").style.display="none";
+});
+</script>
+
+</body>
+</html>
